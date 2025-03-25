@@ -1,0 +1,58 @@
+.checkIcon {
+  width: 52px;
+  height: 52px;
+  stroke-width: 2;
+  stroke: #5d2d91;
+  stroke-miterlimit: 10;
+  background: transparent;
+  border-radius: 50%;
+  animation: fillBackground 0.4s ease-in-out 0.6s forwards;
+}
+
+.circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  stroke: white;
+  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fillBackground {
+  0% {
+    background: transparent;
+  }
+  100% {
+    background: #5d2d91;
+  }
+}
+
+@keyframes scale {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
+  }
+}
+
+.checkIcon {
+  animation: fillBackground 0.4s ease-in-out 0.6s forwards,
+    scale 0.3s ease-in-out 0.9s both;
+}
+
+.iconContainer {
+  border-radius: 50%;
+}

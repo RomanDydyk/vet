@@ -1,0 +1,32 @@
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+  background-color: white;
+  width: fit-content;
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.tab {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--primary-color);
+  font-weight: 700;
+  border-radius: 4px;
+  margin-right: 10px;
+  transition: all 0.2s ease;
+  font-weight: 700;
+}
+
+.tab:last-child {
+  margin-right: 0;
+}
+
+.tab.active {
+  background-color: #4b2e83;
+  color: white;
+  opacity: 1;
+}
