@@ -1,0 +1,21 @@
+.statusLegend {
+  display: flex;
+  justify-content: flex-end;
+  gap: 40px;
+  background-color: #fff;
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.statusItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.statusIcon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-block;
+}

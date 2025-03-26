@@ -1,0 +1,29 @@
+.newButtonContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.newButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ede8f0;
+  color: #471e6d;
+  padding: 8px 10px;
+  font-weight: 700;
+  width: fit-content;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.newButton:hover {
+  background-color: #ebe7f1;
+}
+
+.arrow {
+  width: 1rem;
+  height: 1rem;
+}

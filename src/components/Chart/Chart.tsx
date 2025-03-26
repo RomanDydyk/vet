@@ -22,7 +22,6 @@ type ChartProps = {
 const Chart = ({ data }: ChartProps) => {
   const [showPopup, setShowPopup] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
   const popupRef = useClickOutside(() => setShowPopup(false));
   const modalRef = useClickOutside(() => setShowSuccessModal(false));
   const chartRef = useRef<HTMLDivElement>(null);
@@ -87,11 +86,7 @@ const Chart = ({ data }: ChartProps) => {
       </ResponsiveContainer>
 
       <div ref={popupRef}>
-        <button
-          className={styles.downloadIcon}
-          onClick={handleDownloadClick}
-          ref={buttonRef}
-        >
+        <button className={styles.downloadIcon} onClick={handleDownloadClick}>
           <Download />
         </button>
 

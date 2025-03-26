@@ -1,99 +1,42 @@
-import React, { useState } from 'react';
+import { useState, useEffect, RefObject } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
   getPaginationRowModel,
   flexRender,
-  createColumnHelper,
-  SortingState,
+  type SortingState,
+  ColumnDef,
 } from '@tanstack/react-table';
-import { ICustomer } from '../../pages/DashboardPage/types';
 import styles from './CustomersTable.module.css';
+import Pagination from './Pagination';
+import Download from '../../assets/icons/shared/Download';
+import useClickOutside from '../../hooks/useCliccOutside';
+import SuccessModal from '../UI/SuccessModal';
+import DownloadPopUp from '../UI/DownloadPopUp';
+import { useTableExport } from '../../hooks/useTableExport';
 
-interface CustomersTableProps {
-  data: ICustomer[];
+interface CustomersTableProps<T extends object> {
+  data: T[];
+  columns: ColumnDef<T>[];
 }
 
-const CustomersTable = ({ data }: CustomersTableProps) => {
+export default function CustomersTable<T extends object>({
+  data,
+  columns,
+}: CustomersTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [showPopup, setShowPopup] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const columnHelper = createColumnHelper<ICustomer>();
+  const popupRef = useClickOutside(() => setShowPopup(false));
+  const modalRef = useClickOutside(() => setShowSuccessModal(false));
 
-  const columns = [
-    columnHelper.accessor('firstName', {
-      header: () => (
-        <span>
-          First Name <span className={styles.sortIcon}>↕</span>
-        </span>
-      ),
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('lastName', {
-      header: () => (
-        <span>
-          Last Name <span className={styles.sortIcon}>↕</span>
-        </span>
-      ),
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('email', {
-      header: 'Email',
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('phone', {
-      header: 'Phone',
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('pets', {
-      header: 'Pets',
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('joinDate', {
-      header: () => (
-        <span>
-          Join Date <span className={styles.sortIcon}>↕</span>
-        </span>
-      ),
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('lastActivityDate', {
-      header: () => (
-        <span>
-          Last Activity Date <span className={styles.sortIcon}>↕</span>
-        </span>
-      ),
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('activeRewards', {
-      header: () => (
-        <span>
-          Active Rewards <span className={styles.sortIcon}>↕</span>
-        </span>
-      ),
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('activeStars', {
-      header: () => (
-        <span>
-          Active Stars <span className={styles.sortIcon}>↕</span>
-        </span>
-      ),
-      cell: (info) => (
-        <span className={styles.stars}>{'★'.repeat(info.getValue())}</span>
-      ),
-    }),
-    columnHelper.accessor('isNew', {
-      header: '',
-      cell: (info) =>
-        info.getValue() ? <div className={styles.newBadge}>NEW</div> : null,
-    }),
-    columnHelper.accessor('id', {
-      header: '',
-      cell: () => <button className={styles.detailsButton}>→</button>,
-    }),
-  ];
+  const { downloadCSV, downloadXLSX, downloadPDF } = useTableExport({
+    columns: columns as ColumnDef<T>[],
+    data,
+  });
 
   const table = useReactTable({
     data,
@@ -107,10 +50,26 @@ const CustomersTable = ({ data }: CustomersTableProps) => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  // Set page size
-  React.useEffect(() => {
+  useEffect(() => {
     table.setPageSize(rowsPerPage);
   }, [rowsPerPage, table]);
+
+  const handleDownloadClick = () => {
+    setShowPopup(!showPopup);
+  };
+
+  const handleFormatClick = (format: string) => {
+    if (format === 'CSV') {
+      downloadCSV();
+    } else if (format === 'XLSX') {
+      downloadXLSX();
+    } else if (format === 'PDF') {
+      downloadPDF();
+    }
+
+    setShowPopup(false);
+    setShowSuccessModal(true);
+  };
 
   return (
     <div className={styles.tableWrapper}>
@@ -122,9 +81,10 @@ const CustomersTable = ({ data }: CustomersTableProps) => {
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    onClick={header.column.getToggleSortingHandler()}
                     className={
-                      header.column.getCanSort() ? styles.sortable : ''
+                      header.column.getCanSort()
+                        ? styles.sortableHeader
+                        : styles.header
                     }
                   >
                     {flexRender(
@@ -137,118 +97,54 @@ const CustomersTable = ({ data }: CustomersTableProps) => {
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+            {table.getRowModel().rows.length > 0 ? (
+              table.getRowModel().rows.map((row) => (
+                <tr key={row.id} className={styles.row}>
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className={styles.cell}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={columns.length} className={styles.emptyCell}>
+                  No results found
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
 
-      <div className={styles.pagination}>
-        <div className={styles.rowsPerPage}>
-          <span>Rows per page:</span>
-          <select
-            value={rowsPerPage}
-            onChange={(e) => setRowsPerPage(Number(e.target.value))}
-          >
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={30}>30</option>
-            <option value={40}>40</option>
-            <option value={50}>50</option>
-          </select>
-          <span className={styles.displayingInfo}>
-            Displaying {table.getState().pagination.pageIndex * rowsPerPage + 1}{' '}
-            to{' '}
-            {Math.min(
-              (table.getState().pagination.pageIndex + 1) * rowsPerPage,
-              data.length
-            )}{' '}
-            of {data.length} results
-          </span>
-        </div>
+      <Pagination
+        table={table}
+        rowsPerPage={rowsPerPage}
+        setRowsPerPage={setRowsPerPage}
+      />
+      <div ref={popupRef} className={styles.downloadContainer}>
+        <button className={styles.downloadIcon} onClick={handleDownloadClick}>
+          <Download />
+        </button>
 
-        <div className={styles.paginationControls}>
-          <button
-            className={styles.paginationButton}
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {'<<'}
-          </button>
-          <button
-            className={styles.paginationButton}
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {'<'}
-          </button>
-
-          {Array.from({ length: Math.min(5, table.getPageCount()) }).map(
-            (_, index) => {
-              const pageIndex = table.getState().pagination.pageIndex;
-              let pageNumber;
-
-              if (table.getPageCount() <= 5) {
-                pageNumber = index + 1;
-              } else if (pageIndex < 3) {
-                pageNumber = index + 1;
-              } else if (pageIndex > table.getPageCount() - 3) {
-                pageNumber = table.getPageCount() - 4 + index;
-              } else {
-                pageNumber = pageIndex - 1 + index;
-              }
-
-              return (
-                <React.Fragment key={pageNumber}>
-                  {pageNumber === pageIndex + 1 ? (
-                    <button
-                      className={`${styles.paginationButton} ${styles.activePage}`}
-                    >
-                      {pageNumber}
-                    </button>
-                  ) : (
-                    <button
-                      className={styles.paginationButton}
-                      onClick={() => table.setPageIndex(pageNumber - 1)}
-                    >
-                      {pageNumber}
-                    </button>
-                  )}
-                  {pageNumber === 3 &&
-                    pageIndex >= 3 &&
-                    table.getPageCount() > 5 && (
-                      <span className={styles.ellipsis}>...</span>
-                    )}
-                </React.Fragment>
-              );
-            }
-          )}
-
-          <button
-            className={styles.paginationButton}
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            {'>'}
-          </button>
-          <button
-            className={styles.paginationButton}
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-          >
-            {'>>'}
-          </button>
-        </div>
+        {showPopup && (
+          <DownloadPopUp
+            handleFormatClick={handleFormatClick}
+            top={40}
+            right={-2}
+          />
+        )}
+        {showSuccessModal && (
+          <SuccessModal
+            onClose={() => setShowSuccessModal(false)}
+            ref={modalRef as RefObject<HTMLDivElement>}
+          />
+        )}
       </div>
     </div>
   );
-};
-
-export default CustomersTable;
+}

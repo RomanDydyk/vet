@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import styles from './DashboardPage.module.css';
 import StatCard from '../../components/StatCard/StatCard';
 import TabNavigation from '../../components/TabNavigation/TabNavigation';
@@ -6,13 +6,61 @@ import Selector from '../../components/UI/Selector';
 import Chart from '../../components/Chart/Chart';
 import CustomersTable from '../../components/CustomersTable/CustomersTable';
 import { statsData, tabsArray, chartData } from './consts';
-import { customersData } from './mockData';
+import useColumnTable from '../../hooks/useColumnTable';
+import { ICustomer, IPet } from './types';
+import StatusLegend from '../../components/CustomersTable/StatusLegend';
+import { ColumnDef } from '@tanstack/react-table';
 
 const DashboardPage = () => {
   const [timeFilter, setTimeFilter] = useState('All time');
   const [activeTab, setActiveTab] = useState(tabsArray[0]);
+  const { dashboardColumns, petColumns } = useColumnTable(activeTab);
 
   const currentChartData = chartData[activeTab as keyof typeof chartData];
+
+  const mockData: ICustomer[] = useMemo(() => {
+    return Array.from({ length: 100 }, (_, i) => ({
+      id: `id-${i + 1}`,
+      firstName: i === 0 ? 'Luis' : `Name`,
+      lastName: i === 0 ? 'Smith' : 'Last Name',
+      email: 'email@gmail.com',
+      phone: '123456789',
+      pets: String(Math.floor(Math.random() * 3) + 1),
+      joinDate: '01/09/24',
+      lastActivityDate: '01/09/24',
+      activeRewards: 0,
+      activeStars: Math.floor(Math.random() * 3),
+      isNew: Math.random() > 0.5,
+    }));
+  }, []);
+
+  const mockPetData: IPet[] = useMemo(() => {
+    return Array.from({ length: 100 }, (_, i) => ({
+      id: `id-${i + 1}`,
+      startsStatus:
+        Math.random() > 0.5
+          ? 'rewarded'
+          : Math.random() > 0.5
+          ? 'current'
+          : Math.random() > 0.5
+          ? 'starsexpired'
+          : 'expiring',
+      rewordsStatus:
+        Math.random() > 0.5
+          ? 'issued'
+          : Math.random() > 0.5
+          ? 'redeemed'
+          : Math.random() > 0.5
+          ? 'reconciled'
+          : 'expired',
+      ownerFirstName: 'Luis',
+      ownerLastName: 'Smith',
+      petName: 'Pet Name',
+      issueDate: '01/09/24',
+      expiryDate: '01/09/24',
+      size: 'Small',
+    }));
+  }, []);
 
   return (
     <div className={styles.dashboard}>
@@ -41,7 +89,26 @@ const DashboardPage = () => {
 
       <Chart data={currentChartData} />
 
-      <CustomersTable data={customersData} />
+      {(activeTab === 'Stars' || activeTab === 'Rewards') && (
+        <StatusLegend activeTab={activeTab} />
+      )}
+
+      {activeTab === 'Stars' ? (
+        <CustomersTable
+          data={mockPetData}
+          columns={petColumns as ColumnDef<IPet>[]}
+        />
+      ) : activeTab === 'Rewards' ? (
+        <CustomersTable
+          data={mockPetData}
+          columns={petColumns as ColumnDef<IPet>[]}
+        />
+      ) : (
+        <CustomersTable
+          data={mockData}
+          columns={dashboardColumns as ColumnDef<ICustomer>[]}
+        />
+      )}
     </div>
   );
 };
