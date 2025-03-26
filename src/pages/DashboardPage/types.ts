@@ -10,6 +10,7 @@ export interface ICustomer {
   activeRewards: number;
   activeStars: number;
   isNew?: boolean;
+  status?: string;
 }
 
 export interface IPet {
@@ -24,3 +25,18 @@ export interface IPet {
   rewordsStatus?: string;
   status?: string;
 }
+
+export type IActivityData = {
+  id: string;
+  status: string;
+  petName: string;
+  product: string;
+  issueDate: string;
+};
+
+export type IRewardsData = {
+  id: string;
+  status: string;
+  petName: string;
+  product: string;
+};

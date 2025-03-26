@@ -41,6 +41,7 @@
 .row {
   background-color: #fff;
   color: #454545;
+  cursor: pointer;
 }
 
 .row:hover {

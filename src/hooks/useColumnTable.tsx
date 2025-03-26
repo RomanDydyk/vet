@@ -3,10 +3,26 @@ import { ICustomer, IPet } from '../pages/DashboardPage/types';
 import { SortableHeader } from '../components/CustomersTable/SortableHeader';
 import NewButton from '../components/UI/NewButton';
 import StatusCell from '../components/CustomersTable/StatusCell';
+import SmallStar from '../assets/icons/shared/SmallStar';
 
 const useColumnTable = (isActive: string) => {
   const columnHelper = createColumnHelper<ICustomer>();
   const petColumnHelper = createColumnHelper<IPet>();
+  const starsColumnHelper = createColumnHelper<any>();
+  const rewardsColumnHelper = createColumnHelper<any>();
+
+  const renderDateWithColor = (value: string, status: string) => {
+    if (!value) return '-';
+
+    let color = '';
+    if (status === 'starsexpired' || status === 'expired') {
+      color = '#FF5A5A';
+    } else if (status === 'expiring') {
+      color = '#FF9F41';
+    }
+
+    return color ? <span style={{ color }}>{value}</span> : value;
+  };
 
   const baseColumns = [
     columnHelper.accessor('firstName', {
@@ -37,13 +53,15 @@ const useColumnTable = (isActive: string) => {
       header: ({ column }) => (
         <SortableHeader column={column} title="Join Date" />
       ),
-      cell: (info) => info.getValue(),
+      cell: ({ getValue, row }) =>
+        renderDateWithColor(getValue(), row.original.status || ''),
     }),
     columnHelper.accessor('lastActivityDate', {
       header: ({ column }) => (
         <SortableHeader column={column} title="Last Activity Date" />
       ),
-      cell: (info) => info.getValue(),
+      cell: ({ getValue, row }) =>
+        renderDateWithColor(getValue(), row.original.status || ''),
     }),
     columnHelper.accessor('activeRewards', {
       header: ({ column }) => (
@@ -55,7 +73,23 @@ const useColumnTable = (isActive: string) => {
       header: ({ column }) => (
         <SortableHeader column={column} title="Active Stars" />
       ),
-      cell: (info) => <span>{'★'.repeat(info.getValue())}</span>,
+      cell: (info) => {
+        const count = info.getValue() || 0;
+        return (
+          <span>
+            {Array(count)
+              .fill(0)
+              .map((_, i) => (
+                <div
+                  key={i}
+                  style={{ display: 'inline-block', marginRight: '2px' }}
+                >
+                  <SmallStar />
+                </div>
+              ))}
+          </span>
+        );
+      },
     }),
     columnHelper.accessor('isNew', {
       header: '',
@@ -84,13 +118,21 @@ const useColumnTable = (isActive: string) => {
       header: ({ column }) => (
         <SortableHeader column={column} title="Issue Date" />
       ),
-      cell: (info) => info.getValue(),
+      cell: ({ getValue, row }) =>
+        renderDateWithColor(
+          getValue(),
+          row.original.startsStatus || row.original.rewordsStatus || ''
+        ),
     }),
     petColumnHelper.accessor('expiryDate', {
       header: ({ column }) => (
         <SortableHeader column={column} title="Expiry Date" />
       ),
-      cell: (info) => info.getValue(),
+      cell: ({ getValue, row }) =>
+        renderDateWithColor(
+          getValue(),
+          row.original.startsStatus || row.original.rewordsStatus || ''
+        ),
     }),
     petColumnHelper.accessor('size', {
       header: ({ column }) => <SortableHeader column={column} title="Size" />,
@@ -123,9 +165,107 @@ const useColumnTable = (isActive: string) => {
       ? [startsStatusColumn, ...petColumns]
       : [rewordsStatusColumn, ...petColumns];
 
+  const starsColumns = [
+    starsColumnHelper.accessor('status', {
+      header: 'Status',
+      cell: ({ row }) => <StatusCell status={row.original.status} />,
+    }),
+    starsColumnHelper.accessor('petName', {
+      header: ({ column }) => (
+        <SortableHeader column={column} title="Pet Name" />
+      ),
+      cell: (info) => info.getValue(),
+    }),
+    starsColumnHelper.accessor('product', {
+      header: 'Product',
+      cell: (info) => info.getValue(),
+    }),
+    starsColumnHelper.accessor('issueDate', {
+      header: ({ column }) => (
+        <SortableHeader column={column} title="Issue Date" />
+      ),
+      cell: ({ getValue, row }) =>
+        renderDateWithColor(getValue(), row.original.status),
+    }),
+    starsColumnHelper.accessor('expiryDate', {
+      header: ({ column }) => (
+        <SortableHeader column={column} title="Expiry Date" />
+      ),
+      cell: ({ getValue, row }) =>
+        renderDateWithColor(getValue(), row.original.status),
+    }),
+    starsColumnHelper.accessor('size', {
+      header: ({ column }) => <SortableHeader column={column} title="Size" />,
+      cell: (info) => info.getValue(),
+    }),
+  ];
+
+  const rewardsColumns = [
+    rewardsColumnHelper.accessor('status', {
+      header: 'Status',
+      cell: ({ row }) => <StatusCell status={row.original.status} />,
+    }),
+    rewardsColumnHelper.accessor('petName', {
+      header: ({ column }) => (
+        <SortableHeader column={column} title="Pet Name" />
+      ),
+      cell: (info) => info.getValue(),
+    }),
+    rewardsColumnHelper.accessor('product', {
+      header: 'Product',
+      cell: (info) => info.getValue(),
+    }),
+    rewardsColumnHelper.accessor('issueDate', {
+      header: ({ column }) => (
+        <SortableHeader column={column} title="Issue Date" />
+      ),
+      cell: ({ getValue, row }) =>
+        renderDateWithColor(getValue(), row.original.status),
+    }),
+    rewardsColumnHelper.accessor('redeemedDate', {
+      header: ({ column }) => (
+        <SortableHeader column={column} title="Redeemed Date" />
+      ),
+      cell: ({ getValue, row }) =>
+        renderDateWithColor(getValue(), row.original.status),
+    }),
+    rewardsColumnHelper.accessor('expiryDate', {
+      header: ({ column }) => (
+        <SortableHeader column={column} title="Expiry Date" />
+      ),
+      cell: ({ getValue, row }) =>
+        renderDateWithColor(getValue(), row.original.status),
+    }),
+    rewardsColumnHelper.accessor('size', {
+      header: ({ column }) => <SortableHeader column={column} title="Size" />,
+      cell: (info) => info.getValue(),
+    }),
+    rewardsColumnHelper.accessor('wholesaler', {
+      header: ({ column }) => (
+        <SortableHeader column={column} title="Wholesaler" />
+      ),
+      cell: (info) => info.getValue() || '-',
+    }),
+    rewardsColumnHelper.accessor('deliveryNote', {
+      header: ({ column }) => (
+        <SortableHeader column={column} title="Delivery Note" />
+      ),
+      cell: (info) => info.getValue() || '-',
+    }),
+    rewardsColumnHelper.accessor('dnIssueDate', {
+      header: ({ column }) => (
+        <SortableHeader column={column} title="DN Issue Date" />
+      ),
+      cell: ({ getValue, row }) =>
+        renderDateWithColor(getValue(), row.original.status),
+    }),
+  ];
+
   return {
     dashboardColumns: baseColumns,
     petColumns: petColumnsWithStatus,
+    starsColumns,
+    rewardsColumns,
   };
 };
 

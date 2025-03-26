@@ -1,0 +1,35 @@
+.userInfoContainer {
+  width: 400px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.infoRow:last-child {
+  margin-bottom: 0;
+}
+
+.infoColumn {
+  flex: 1;
+}
+
+.infoLabel {
+  margin: 0 0 2px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.infoValue {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}

@@ -1,15 +1,19 @@
 import { ColumnDef } from '@tanstack/react-table';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface UseTableExportProps<T> {
   columns: ColumnDef<T>[];
   data: T[];
   fileName?: string;
+  tableRef?: React.RefObject<HTMLTableElement>;
 }
 
 export function useTableExport<T>({
   columns,
   data,
   fileName = 'data',
+  tableRef,
 }: UseTableExportProps<T>) {
   const downloadCSV = () => {
     const headers = columns.map((col) => String(col.header)).join(',');
@@ -65,7 +69,48 @@ export function useTableExport<T>({
     link.click();
   };
 
-  const downloadPDF = () => {};
+  const downloadPDF = () => {
+    if (!tableRef || !tableRef.current) {
+      console.error('Ссылка на таблицу отсутствует или не содержит элемент');
+      return;
+    }
+
+    const element = tableRef.current;
+
+    const options = {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+    };
+
+    html2canvas(element, options)
+      .then((canvas) => {
+        const pdf = new jsPDF('l', 'pt', 'a4');
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+
+        const imgData = canvas.toDataURL('image/png');
+
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+
+        const scaledWidth = imgWidth * ratio;
+        const scaledHeight = imgHeight * ratio;
+
+        const x = (pageWidth - scaledWidth) / 2;
+        const y = (pageHeight - scaledHeight) / 2;
+
+        pdf.addImage(imgData, 'PNG', x, y, scaledWidth, scaledHeight);
+
+        pdf.save(`${fileName}.pdf`);
+      })
+      .catch((error) => {
+        console.error('Ошибка при создании PDF:', error);
+      });
+  };
 
   return {
     downloadCSV,

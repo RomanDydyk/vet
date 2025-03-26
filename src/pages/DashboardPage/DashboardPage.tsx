@@ -10,6 +10,7 @@ import useColumnTable from '../../hooks/useColumnTable';
 import { ICustomer, IPet } from './types';
 import StatusLegend from '../../components/CustomersTable/StatusLegend';
 import { ColumnDef } from '@tanstack/react-table';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardPage = () => {
   const [timeFilter, setTimeFilter] = useState('All time');
@@ -17,6 +18,12 @@ const DashboardPage = () => {
   const { dashboardColumns, petColumns } = useColumnTable(activeTab);
 
   const currentChartData = chartData[activeTab as keyof typeof chartData];
+
+  const navigate = useNavigate();
+
+  const handleRowClick = (id: string) => {
+    navigate(`/owner/${id}`);
+  };
 
   const mockData: ICustomer[] = useMemo(() => {
     return Array.from({ length: 100 }, (_, i) => ({
@@ -97,16 +104,19 @@ const DashboardPage = () => {
         <CustomersTable
           data={mockPetData}
           columns={petColumns as ColumnDef<IPet>[]}
+          handleRowClick={handleRowClick}
         />
       ) : activeTab === 'Rewards' ? (
         <CustomersTable
           data={mockPetData}
           columns={petColumns as ColumnDef<IPet>[]}
+          handleRowClick={handleRowClick}
         />
       ) : (
         <CustomersTable
           data={mockData}
           columns={dashboardColumns as ColumnDef<ICustomer>[]}
+          handleRowClick={handleRowClick}
         />
       )}
     </div>

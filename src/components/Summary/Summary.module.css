@@ -1,0 +1,95 @@
+.summaryContainer {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  max-width: 600px;
+  background-color: #ede8f0;
+  border-radius: 12px;
+  padding: 40px;
+}
+
+.pawIcon {
+  width: 160px;
+  height: 180px;
+  object-fit: cover;
+}
+
+.cardSummary,
+.totalSummary {
+  flex: 1;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.totalSummary {
+  background-color: white;
+}
+
+.summaryTitle {
+  color: var(--primary-color);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+}
+
+.summaryContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.summaryItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.starIcon,
+.giftIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background-color: #4a2d82;
+  color: white;
+  font-size: 18px;
+}
+
+.giftIcon {
+  background-color: #e74c78;
+}
+
+.summaryData {
+  display: flex;
+  flex-direction: column;
+}
+
+.summaryValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.summaryValueRed {
+  font-size: 24px;
+  font-weight: 700;
+  color: #e74c78;
+}
+
+.summaryLabelRed {
+  font-size: 14px;
+  color: #e74c78;
+}
+
+.summaryLabel {
+  font-size: 14px;
+  color: var(--primary-color);
+}
+
+@media (max-width: 600px) {
+  .summaryContainer {
+    flex-direction: column;
+  }
+}

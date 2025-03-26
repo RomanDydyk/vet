@@ -1,4 +1,4 @@
-import { useState, useEffect, RefObject } from 'react';
+import { useState, useEffect, RefObject, useRef } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -19,11 +19,13 @@ import { useTableExport } from '../../hooks/useTableExport';
 interface CustomersTableProps<T extends object> {
   data: T[];
   columns: ColumnDef<T>[];
+  handleRowClick: (id: string) => void;
 }
 
 export default function CustomersTable<T extends object>({
   data,
   columns,
+  handleRowClick,
 }: CustomersTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -33,9 +35,13 @@ export default function CustomersTable<T extends object>({
   const popupRef = useClickOutside(() => setShowPopup(false));
   const modalRef = useClickOutside(() => setShowSuccessModal(false));
 
+  const tableRef = useRef<HTMLTableElement>(null);
+
   const { downloadCSV, downloadXLSX, downloadPDF } = useTableExport({
     columns: columns as ColumnDef<T>[],
     data,
+    fileName: 'customers-data',
+    tableRef: tableRef as RefObject<HTMLTableElement>,
   });
 
   const table = useReactTable({
@@ -74,7 +80,7 @@ export default function CustomersTable<T extends object>({
   return (
     <div className={styles.tableWrapper}>
       <div className={styles.tableContainer}>
-        <table className={styles.table}>
+        <table ref={tableRef} className={styles.table}>
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
@@ -99,7 +105,11 @@ export default function CustomersTable<T extends object>({
           <tbody>
             {table.getRowModel().rows.length > 0 ? (
               table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className={styles.row}>
+                <tr
+                  key={row.id}
+                  className={styles.row}
+                  onClick={() => handleRowClick(row.id)}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className={styles.cell}>
                       {flexRender(

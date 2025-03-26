@@ -1,0 +1,48 @@
+.activitySection {
+  margin-bottom: 40px;
+}
+
+.activityTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.activityCards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  max-width: 1200px;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.filterContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.checkboxFilter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkboxFilter input {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+}
+
+.checkboxFilter label {
+  font-size: 14px;
+  color: #333;
+}
+
+.activityHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
