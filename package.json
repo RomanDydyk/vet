@@ -11,9 +11,12 @@
   },
   "dependencies": {
     "@tanstack/react-table": "^8.21.2",
+    "i18next": "^24.2.3",
+    "i18next-browser-languagedetector": "^8.0.4",
     "jspdf": "^3.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-i18next": "^15.4.1",
     "react-router-dom": "^7.4.0",
     "recharts": "^2.15.1",
     "save-svg-as-png": "^1.4.17",

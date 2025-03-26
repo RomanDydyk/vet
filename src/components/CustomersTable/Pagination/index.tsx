@@ -34,8 +34,8 @@ const Pagination = <T,>({
           {table.getRowModel().rows.length > 0
             ? ` to ${Math.min(
                 (table.getState().pagination.pageIndex + 1) * rowsPerPage,
-                table.getRowModel().rows.length
-              )} of ${table.getCoreRowModel().rows.length}`
+                table.getPrePaginationRowModel().rows.length
+              )} of ${table.getPrePaginationRowModel().rows.length}`
             : ''}{' '}
           results
         </span>

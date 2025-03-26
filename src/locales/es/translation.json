@@ -1,0 +1,12 @@
+{
+  "appTitle": "ABC Vet - Consola",
+  "actions": {
+    "notifications": "Notificaciones",
+    "logout": "Cerrar Sesión"
+  },
+  "sidebar": {
+    "dashboard": "Panel",
+    "rewards": "Recompensas",
+    "clinicConsole": "Consola de Clínica"
+  }
+}

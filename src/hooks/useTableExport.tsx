@@ -16,21 +16,35 @@ export function useTableExport<T>({
   tableRef,
 }: UseTableExportProps<T>) {
   const downloadCSV = () => {
-    const headers = columns.map((col) => String(col.header)).join(',');
+    const headers = columns
+      .filter((col) => col.header)
+      .map((col) => {
+        const header = String(col.header).replace(/"/g, '""');
+        return /[",\n\r]/.test(header) ? `"${header}"` : header;
+      })
+      .join(',');
+
     const rows = data
-      .map((row) =>
-        columns
+      .map((row) => {
+        return columns
+          .filter((col) => col.header)
           .map((col) => {
-            if ('accessorKey' in col) {
+            let cellValue = '';
+
+            if ('accessorKey' in col && col.accessorKey) {
               const key = col.accessorKey as string;
-              return key ? row[key as keyof T] : '';
+              cellValue = String(row[key as keyof T] || '');
             } else if ('accessorFn' in col && col.accessorFn) {
-              return col.accessorFn(row, 0) || '';
+              cellValue = String(col.accessorFn(row, 0) || '');
+            } else if ('id' in col && col.id) {
+              cellValue = String(row[col.id as keyof T] || '');
             }
-            return '';
+
+            cellValue = cellValue.replace(/"/g, '""');
+            return /[",\n\r]/.test(cellValue) ? `"${cellValue}"` : cellValue;
           })
-          .join(',')
-      )
+          .join(',');
+      })
       .join('\n');
 
     const csvContent = `${headers}\n${rows}`;
@@ -43,21 +57,31 @@ export function useTableExport<T>({
   };
 
   const downloadXLSX = () => {
-    const headers = columns.map((col) => String(col.header)).join('\t');
+    const headers = columns
+      .filter((col) => col.header)
+      .map((col) => String(col.header))
+      .join('\t');
+
     const rows = data
-      .map((row) =>
-        columns
+      .map((row) => {
+        return columns
+          .filter((col) => col.header)
           .map((col) => {
-            if ('accessorKey' in col) {
+            let cellValue = '';
+
+            if ('accessorKey' in col && col.accessorKey) {
               const key = col.accessorKey as string;
-              return key ? row[key as keyof T] : '';
+              cellValue = String(row[key as keyof T] || '');
             } else if ('accessorFn' in col && col.accessorFn) {
-              return col.accessorFn(row, 0) || '';
+              cellValue = String(col.accessorFn(row, 0) || '');
+            } else if ('id' in col && col.id) {
+              cellValue = String(row[col.id as keyof T] || '');
             }
-            return '';
+
+            return cellValue.replace(/\t/g, ' ');
           })
-          .join('\t')
-      )
+          .join('\t');
+      })
       .join('\n');
 
     const xlsxContent = `${headers}\n${rows}`;
@@ -71,7 +95,6 @@ export function useTableExport<T>({
 
   const downloadPDF = () => {
     if (!tableRef || !tableRef.current) {
-      console.error('Ссылка на таблицу отсутствует или не содержит элемент');
       return;
     }
 

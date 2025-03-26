@@ -1,0 +1,12 @@
+{
+  "appTitle": "ABC Vet - Console",
+  "actions": {
+    "notifications": "Notifications",
+    "logout": "Log Out"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "rewards": "Rewards",
+    "clinicConsole": "Clinic Console"
+  }
+}
