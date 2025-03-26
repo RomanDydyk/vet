@@ -32,6 +32,8 @@ export type IActivityData = {
   petName: string;
   product: string;
   issueDate: string;
+  expiryDate: string;
+  size: string;
 };
 
 export type IRewardsData = {
@@ -39,4 +41,11 @@ export type IRewardsData = {
   status: string;
   petName: string;
   product: string;
+  issueDate: string;
+  redeemedDate: string;
+  expiryDate: string;
+  size: string;
+  wholesaler: string;
+  deliveryNote: string;
+  dnIssueDate: string;
 };

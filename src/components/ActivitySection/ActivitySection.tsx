@@ -7,6 +7,7 @@ import CustomersTable from '../CustomersTable/CustomersTable';
 import useColumnTable from '../../hooks/useColumnTable';
 import { mockStarsData, mockRewardsData } from './mockData';
 import FilterDropdown from '../FilterDropdown/FilterDropdown';
+import { ColumnDef } from '@tanstack/react-table';
 
 const ActivitySection = () => {
   const [activeTab, setActiveTab] = useState('Stars');
@@ -80,7 +81,11 @@ const ActivitySection = () => {
 
       <CustomersTable
         data={filteredData}
-        columns={activeTab === 'Stars' ? starsColumns : rewardsColumns}
+        columns={
+          activeTab === 'Stars'
+            ? (starsColumns as ColumnDef<(typeof filteredData)[0]>[])
+            : (rewardsColumns as ColumnDef<(typeof filteredData)[0]>[])
+        }
         handleRowClick={() => {}}
       />
     </div>

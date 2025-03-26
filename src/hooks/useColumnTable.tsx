@@ -1,5 +1,10 @@
 import { createColumnHelper } from '@tanstack/react-table';
-import { ICustomer, IPet } from '../pages/DashboardPage/types';
+import {
+  IActivityData,
+  ICustomer,
+  IPet,
+  IRewardsData,
+} from '../pages/DashboardPage/types';
 import { SortableHeader } from '../components/CustomersTable/SortableHeader';
 import NewButton from '../components/UI/NewButton';
 import StatusCell from '../components/CustomersTable/StatusCell';
@@ -8,8 +13,8 @@ import SmallStar from '../assets/icons/shared/SmallStar';
 const useColumnTable = (isActive: string) => {
   const columnHelper = createColumnHelper<ICustomer>();
   const petColumnHelper = createColumnHelper<IPet>();
-  const starsColumnHelper = createColumnHelper<any>();
-  const rewardsColumnHelper = createColumnHelper<any>();
+  const starsColumnHelper = createColumnHelper<IActivityData>();
+  const rewardsColumnHelper = createColumnHelper<IRewardsData>();
 
   const renderDateWithColor = (value: string, status: string) => {
     if (!value) return '-';

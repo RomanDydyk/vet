@@ -1,11 +1,12 @@
 import Arrow from '../../../assets/icons/table/Arrow';
 import styles from './SortableHeader.module.css';
+import { Column } from '@tanstack/react-table';
 
-export const SortableHeader = ({
+export const SortableHeader = <T,>({
   column,
   title,
 }: {
-  column: any;
+  column: Column<T>;
   title: string;
 }) => {
   return (
