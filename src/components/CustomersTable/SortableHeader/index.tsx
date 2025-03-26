@@ -1,4 +1,3 @@
-import { useReactTable } from '@tanstack/react-table';
 import Arrow from '../../../assets/icons/table/Arrow';
 import styles from './SortableHeader.module.css';
 
@@ -6,9 +5,7 @@ export const SortableHeader = ({
   column,
   title,
 }: {
-  column: ReturnType<
-    typeof useReactTable
-  >['getHeaderGroups'][0]['headers'][0]['column'];
+  column: any;
   title: string;
 }) => {
   return (
